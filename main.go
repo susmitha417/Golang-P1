@@ -4,6 +4,8 @@ import (
 	"MyProject/array"
 	"MyProject/calci"
 	"MyProject/loops"
+	"MyProject/maps"
+	"MyProject/methods"
 	"MyProject/structures"
 	"fmt"
 )
@@ -50,4 +52,12 @@ func main() {
 
 	fmt.Println("HI")
 
+	//method
+	rect := methods.Rectangle{Width: 5, Height: 10}
+	fmt.Println("Rectangle Area:", rect.Area()) // Output: 50
+	rect.Display()
+
+	//maps
+	countries := map[string]string{"US": "United States", "IN": "India"}
+	maps.PrintMap(countries)
 }
