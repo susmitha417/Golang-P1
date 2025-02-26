@@ -346,12 +346,7 @@ Explanation:
 The buffered channel can hold 2 values before blocking the sender.
 In the example, the first two ch <- operations send values into the channel without blocking because the buffer has space for two values.
 The receiver can then receive the values from the channel, and the sender can continue sending once space becomes available in the buffer.
-Key Differences:
-Feature	Unbuffered Channel	Buffered Channel
-Capacity	No capacity (i.e., it cannot hold any data until a receiver is ready)	Has a fixed capacity (can hold a number of items before blocking)
-Blocking Behavior	Blocks both sender and receiver until data is received/sent	Sender blocks only when the buffer is full; receiver blocks only when the buffer is empty
-Use Case	Used when strict synchronization is required between sender and receiver	Used when you want to allow some flexibility in sending and receiving data concurrently
-Performance	May have more synchronization overhead because both sides block until data is received/sent	Allows sending data into the channel without blocking until the buffer is full, improving performance for certain use cases
+
 When to Use Which?
 Use an Unbuffered Channel when:
 
