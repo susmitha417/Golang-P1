@@ -194,22 +194,22 @@ func DisplayAddress(address Address) {
 }
 ```
 
-Goroutines
-Goroutines are lightweight threads managed by the Go runtime. They allow functions or methods to run concurrently.
-You create a goroutine using the go keyword before calling a function.
-Syntax:
+# Go Goroutines and Channels: 
 
-go
-Copy
-Edit
+## 1. Goroutines
+
+Goroutines are lightweight threads managed by the Go runtime. They enable functions or methods to run concurrently, allowing the Go program to perform multiple tasks simultaneously.
+
+### Creating a Goroutine
+To create a goroutine, you use the `go` keyword before calling a function. This will start the function as a separate goroutine that runs concurrently with the main program.
+
+### Syntax:
+```go
 go functionName()
-This will start the function functionName as a separate goroutine, running concurrently with the rest of the program.
+```
 
-Example:
-
-go
-Copy
-Edit
+### Example:
+```go
 package main
 
 import "fmt"
@@ -221,38 +221,36 @@ func sayHello() {
 func main() {
     go sayHello()  // Start sayHello function as a goroutine
 
-    // Allow goroutine to complete before exiting main function
+    // Allow goroutine to complete before exiting the main function
     fmt.Scanln()  // Block the main function until Enter is pressed
 }
-Explanation:
-The go sayHello() line launches the sayHello function as a goroutine, so the main function continues executing concurrently.
-To prevent the program from exiting immediately (before the goroutine can finish its work), we use fmt.Scanln() to block the main goroutine, allowing the sayHello function to finish.
-2. Channels
-Channels provide a way for goroutines to communicate with each other and synchronize their execution. A channel is used to send and receive values between goroutines. Channels are typed, meaning they can carry only one type of data (e.g., chan int, chan string).
+```
 
-Syntax to create a channel:
+### Explanation:
+- `go sayHello()` launches the `sayHello` function as a goroutine, running concurrently with the rest of the program.
+- To prevent the main program from exiting immediately (before the goroutine finishes), we use `fmt.Scanln()` to block the main goroutine, allowing `sayHello` to complete its execution.
 
-go
-Copy
-Edit
+## 2. Channels
+
+Channels are a way for goroutines to communicate with each other and synchronize their execution. A channel allows you to send and receive values between goroutines. Channels are typed, meaning they can carry only one type of data (e.g., `chan int`, `chan string`).
+
+### Syntax to Create a Channel:
+```go
 ch := make(chan int)  // Creates an unbuffered channel of type int
-Sending Data to a Channel:
+```
 
-go
-Copy
-Edit
+### Sending Data to a Channel:
+```go
 ch <- value  // Send data to channel ch
-Receiving Data from a Channel:
+```
 
-go
-Copy
-Edit
+### Receiving Data from a Channel:
+```go
 value := <-ch  // Receive data from channel ch
-Example:
+```
 
-go
-Copy
-Edit
+### Example of Using a Channel:
+```go
 package main
 
 import "fmt"
@@ -270,27 +268,32 @@ func main() {
     result := <-ch  // Receive result from the channel
     fmt.Println("Result from goroutine:", result)
 }
-Explanation:
-We create a channel ch to communicate between the main goroutine and the goroutine add.
-The add function calculates the sum and sends the result to the channel ch.
-The main function waits for the result from the channel and prints it.
+```
 
-Channels come in two types: Buffered Channels and Unbuffered Channels. 
+### Explanation:
+- A channel `ch` is created to communicate between the main goroutine and the `add` goroutine.
+- The `add` function calculates the sum and sends the result to the channel `ch`.
+- The main function waits for the result from the channel and prints it.
 
-1. Unbuffered Channels
-An unbuffered channel is a channel with no capacity to hold data. When a value is sent on an unbuffered channel, the sending goroutine is blocked until another goroutine receives that value. Similarly, if a goroutine tries to receive from an unbuffered channel but no value has been sent, the receiver is blocked until a value is sent.
+---
 
-Behavior: Blocking occurs on both the sending and receiving side.
-Use case: Used when you want to ensure synchronization between goroutines, meaning the sender waits for the receiver to be ready before sending the data and vice versa.
-Syntax to create an unbuffered channel:
-go
-Copy
-Edit
+## Types of Channels:
+
+### 1. **Unbuffered Channels**
+
+An **unbuffered channel** has no capacity to hold data. The sending goroutine is blocked until another goroutine receives the value. Similarly, if a goroutine tries to receive from an unbuffered channel but no value has been sent, it will block until a value is available.
+
+#### Characteristics:
+- **Blocking**: Both sending and receiving operations block until data is exchanged.
+- **Use Case**: Used when strict synchronization is needed between the sender and receiver (i.e., sender waits for receiver and vice versa).
+
+#### Syntax to Create an Unbuffered Channel:
+```go
 ch := make(chan int)  // Creates an unbuffered channel of type int
-Example of Unbuffered Channel:
-go
-Copy
-Edit
+```
+
+#### Example of Unbuffered Channel:
+```go
 package main
 
 import "fmt"
@@ -308,23 +311,29 @@ func main() {
     val := <-ch  // Receive value (this will block until data is sent)
     fmt.Println("Received value:", val)
 }
-Explanation:
-In this example, the sender goroutine will be blocked on ch <- 42 until the main goroutine receives the value using <-ch.
-Similarly, the receiver will be blocked until the sender sends the value.
-2. Buffered Channels
-A buffered channel has a capacity to hold a certain number of values before blocking the sender. The sender will only be blocked when the channel reaches its capacity. Once there is space in the buffer (i.e., the receiver takes a value), the sender can continue sending values. The receiver can also receive values from the channel without blocking until there is data in the channel.
+```
 
-Behavior: The sender can send data into the channel without blocking until the buffer is full.
-Use case: Buffered channels are useful when you want to decouple the sender and receiver, allowing the sender to continue working even if the receiver is not immediately available (up to the buffer's capacity).
-Syntax to create a buffered channel:
-go
-Copy
-Edit
+### Explanation:
+- The sender goroutine is blocked on `ch <- 42` until the receiver receives the value using `<-ch`.
+- Similarly, the receiver is blocked until the sender sends the value.
+
+---
+
+### 2. **Buffered Channels**
+
+A **buffered channel** has a capacity to hold a certain number of values before blocking the sender. The sender will only be blocked when the channel reaches its capacity. Once there is space in the buffer (i.e., the receiver takes a value), the sender can continue sending values. The receiver can receive values without blocking until the buffer is empty.
+
+#### Characteristics:
+- **Non-blocking until full**: The sender can send data into the channel without blocking until the buffer is full.
+- **Use Case**: Useful when you want to decouple the sender and receiver, allowing the sender to continue sending data even if the receiver is not immediately available (up to the buffer's capacity).
+
+#### Syntax to Create a Buffered Channel:
+```go
 ch := make(chan int, 2)  // Creates a buffered channel with capacity of 2
-Example of Buffered Channel:
-go
-Copy
-Edit
+```
+
+#### Example of Buffered Channel:
+```go
 package main
 
 import "fmt"
@@ -342,26 +351,32 @@ func main() {
     fmt.Println(<-ch)  // Received 10
     fmt.Println(<-ch)  // Received 20
 }
-Explanation:
-The buffered channel can hold 2 values before blocking the sender.
-In the example, the first two ch <- operations send values into the channel without blocking because the buffer has space for two values.
-The receiver can then receive the values from the channel, and the sender can continue sending once space becomes available in the buffer.
+```
 
-When to Use Which?
-Use an Unbuffered Channel when:
+### Explanation:
+- The buffered channel can hold 2 values before blocking the sender.
+- In this example, the first two `ch <-` operations send values into the channel without blocking because the buffer has space for two values.
+- The receiver can then receive values from the channel, and the sender can continue sending once space becomes available in the buffer.
 
-You want strict synchronization between sender and receiver.
-The communication between the goroutines should happen immediately (sender waits for receiver and vice versa).
-Typically used when you need to guarantee that the sender and receiver are synchronized at the exact moment of communication.
-Use a Buffered Channel when:
+---
 
-You want the sender to be able to send data without waiting for the receiver immediately (up to the buffer's capacity).
-You need to decouple the sender and receiver, allowing the sender to continue working even if the receiver hasn't processed the previous messages yet.
-Often used in cases where the sender produces data at a different rate than the receiver can consume.
-Example with Both Buffered and Unbuffered Channels:
-go
-Copy
-Edit
+## When to Use Which?
+
+### Use an **Unbuffered Channel** when:
+- You want strict synchronization between the sender and receiver.
+- Communication between goroutines should happen immediately (i.e., sender waits for the receiver and vice versa).
+- Typically used when you need to ensure that the sender and receiver are synchronized at the exact moment of communication.
+
+### Use a **Buffered Channel** when:
+- You want the sender to send data without waiting for the receiver immediately (up to the buffer's capacity).
+- You need to decouple the sender and receiver, allowing the sender to continue working even if the receiver hasn't processed the previous messages yet.
+- Often used in cases where the sender produces data at a different rate than the receiver can consume.
+
+---
+
+## Example with Both Buffered and Unbuffered Channels:
+
+```go
 package main
 
 import "fmt"
@@ -383,9 +398,11 @@ func main() {
     fmt.Println(<-bufferedCh)  // Receive 1
     fmt.Println(<-bufferedCh)  // Receive 2
 }
-Summary:
-Unbuffered channels block both the sender and receiver until data is exchanged.
-Buffered channels allow the sender to send multiple values without blocking until the buffer is full.
+```
+
+### Summary:
+- **Unbuffered channels** block both the sender and receiver until data is exchanged.
+- **Buffered channels** allow the sender to send multiple values without blocking until the buffer is full.
 
 ## How to Use
 
